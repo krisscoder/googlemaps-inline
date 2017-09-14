@@ -1,0 +1,109 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> </title>
+  <script src="js/jQuery-2.2.0.min.js"></script>
+   <style>
+          #map {
+            width: 100%;
+            height: 400px;
+            background-color: grey;
+            display: none;
+          }
+    </style>
+</head>
+<body>           
+        <div>  
+           <h4><strong>UBICACION</strong></h4><br>
+            <div class="row">
+              <div>
+                 <div class="form-group">
+                  <label for="provincia">Pais</label>
+                  <input type="text" min ="1" class="form-control" id="pais" name="pais" placeholder="">  
+                 </div>
+               </div>
+
+               <div>
+                 <div class="form-group">
+                  <label for="provincia">Provincia</label>
+                  <input type="text" min ="1" class="form-control" id="provincia" name="provincia" placeholder="">  
+                 </div>
+               </div>
+
+               <div>
+                 <div class="form-group">
+                  <label for="localidad">Localidad</label>
+                   <input type="text" min ="1" class="form-control" id="localidad" name="localidad" placeholder=""> 
+                 </div>
+               </div>
+            </div> <!-- fin row -->
+
+            <div class="row">
+              <div class="col-md-6">
+               <div class="form-group">
+                <label for="calle">Calle</label>
+                <input type="text"  class="form-control" id="calle" name="calle" placeholder="">
+               </div>
+               </div>
+
+               <div>
+               <div class="form-group">
+                <label for="altura">Altura</label>
+                <input type="number" min ="1" class="form-control" id="altura" name="altura" placeholder="">
+               </div>
+               </div>
+            </div><!-- fin row -->
+
+            <!-- Mapa -->
+<div class="row mapa">
+  <div>   
+    <button id="generamapa" class="btn btn-success" style="margin-bottom: 20px;">Comprobar dirección en el Mapa</button>
+    <div id="map"></div>
+</div>
+</div>
+<!-- fin Mapa -->
+</div>     
+
+<script>   
+function initMap() {   
+  $('#generamapa').click(function() {         
+      var geocoder = new google.maps.Geocoder();
+      var provincia = $('#provincia').val();
+      var localidad = $('#localidad').val();  
+      var calle = $('#calle').val();
+      var pais = $('#pais').val();
+      var altura = $('#altura').val(); 
+      var address = calle + " " + altura + "," + localidad + pais;
+      if (calle && altura && provincia!='Seleccione' && localidad!='Seleccione' && localidad!='<< Selecione la Provincia') {
+        
+        geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) { //si encontro direccion en Google
+          $('#map').css("display","block");
+            var latitude = results[0].geometry.location.lat();
+            var  longitude = results[0].geometry.location.lng();
+            var uluru = {lat: latitude, lng: longitude};
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  zoom: 15,
+                  center: uluru
+                });
+                var marker = new google.maps.Marker({
+                  position: uluru,
+                  map: map
+                });
+            } else {//si no encuentra direccion en Google
+              alert('ATENCION: \nDirección no encontrada. Compruebe los datos.')
+            }       
+        }); 
+      } else { //si presiona boton pero faltan datos
+        alert('ATENCION: \nDebe ingresar: País, Dirección, Provincia y Localidad.')
+      }
+  });        
+}  
+
+ $.getScript("https://maps.googleapis.com/maps/api/js?key=<youAPIkey>&callback=initMap"); 
+</script>
+ 
+</body>
+</html>
+
